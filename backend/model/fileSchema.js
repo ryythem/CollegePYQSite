@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { FileDBConnection } = require("../db/db");
 
 const fileSchema = new mongoose.Schema({
   userId: {
@@ -20,6 +21,5 @@ const fileSchema = new mongoose.Schema({
   },
 });
 
-
-const File = mongoose.model('File',fileSchema);
+const File = FileDBConnection.model("File", fileSchema);
 module.exports = File;

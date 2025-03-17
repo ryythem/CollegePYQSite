@@ -3,6 +3,7 @@ const express = require("express");
 const { bucket } = require("../firebase.js");
 const File = require("../model/fileSchema.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
+
 const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -79,6 +80,32 @@ router.get("/my-uploads", authMiddleware, async (req, res) => {
     return res.status(200).json({ files });
   } catch (error) {
     return res.status(500).json({ message: "Failed to fetch the files" });
+  }
+});
+
+router.delete("/delete-file/:fileId", authMiddleware, async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+    const file = await File.findById(fileId);
+    if (!file) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found",
+      });
+    }
+    
+    const fileRef = bucket.file(file.filename);
+    fileRef.delete();
+    await File.findByIdAndDelete(fileId);
+    return res.status(200).json({
+      success: true,
+      message: "File successfully deleted",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      message: "Error",
+    });
   }
 });
 

@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const User = require("../model/userSchema.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const OTPModel = require("../model/otpSchema.js");
 
 const router = express.Router();
 
@@ -38,7 +39,6 @@ const sendOTP = async (email, otp) => {
   }
 };
 
-// Signup Route
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -51,25 +51,34 @@ router.post("/signup", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User already exists, Please log in" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists, Please log in",
+      });
     }
 
     const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
 
     const otpSent = await sendOTP(email, otp);
     if (!otpSent.success) {
-      return res
-        .status(500)
-        .json({ message: "Error sending OTP", error: otpSent.error });
+      return res.status(500).json({
+        success: false,
+        message: "Error sending OTP",
+        error: otpSent.error,
+      });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await OTPModel.findOneAndUpdate(
+      { email },
+      { otp, otpExpiry, password: hashedPassword },
+      { upsert: true, new: true }
+    );
 
-    await User.create({ email, password: hashedPassword, otp, otpExpiry });
-
-    return res.json({ message: "OTP sent! Please verify your email" });
+    return res.json({
+      success: true,
+      message: "OTP sent! Please verify your email",
+    });
   } catch (e) {
     return res.status(500).json({ message: "SignUp failed", error: e.message });
   }
@@ -78,39 +87,36 @@ router.post("/signup", async (req, res) => {
 // Verify OTP Route
 router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
+
   try {
-    const user = await User.findOne({ email });
+    const otpRecord = await OTPModel.findOne({ email });
 
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
+    if (!otpRecord) {
+      return res.status(400).json({ success: false, message: "Otp expired" });
     }
 
-    if (user.verified) {
-      return res
-        .status(400)
-        .json({ message: "User already verified! Please log in" });
+    if (otpRecord.otp !== otp.toString()) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 
-    if (user.otp !== otp.toString()) {
-      return res.status(400).json({ message: "Invalid OTP" });
+    if (new Date(otpRecord.otpExpiry) < new Date()) {
+      return res.status(400).json({ success: false, message: "OTP Expired" });
     }
 
-    if (new Date(user.otpExpiry) < new Date()) {
-      return res.status(400).json({ message: "OTP Expired" });
-    }
+    await User.create({ email, password: otpRecord.password });
 
-    user.verified = true;
-    user.otp = null;
-    user.otpExpiry = null;
-    await user.save();
+    await OTPModel.deleteOne({ email });
 
-    return res
-      .status(200)
-      .json({ message: "Email successfully verified! You can log in now" });
+    return res.status(200).json({
+      success: true,
+      message: "Email successfully verified! You can log in now",
+    });
   } catch (e) {
-    return res
-      .status(500)
-      .json({ message: "OTP verification failed", error: e.message });
+    return res.status(500).json({
+      success: false,
+      message: "OTP verification failed",
+      error: e.message,
+    });
   }
 });
 
@@ -121,18 +127,16 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
-
-    if (!user.verified) {
       return res
         .status(400)
-        .json({ message: "Email is not verified! Please verify your email" });
+        .json({ success: false, message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid Email or Password" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Email or Password" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
@@ -140,6 +144,7 @@ router.post("/login", async (req, res) => {
     });
 
     return res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
     });
