@@ -93,7 +93,7 @@ router.delete("/delete-file/:fileId", authMiddleware, async (req, res) => {
         message: "File not found",
       });
     }
-    
+
     const fileRef = bucket.file(file.filename);
     fileRef.delete();
     await File.findByIdAndDelete(fileId);
@@ -105,6 +105,68 @@ router.delete("/delete-file/:fileId", authMiddleware, async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error",
+    });
+  }
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    const files = await File.find();
+    if (files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No files found",
+      });
+    }
+    const filesList = files.map((file) => ({
+      filename: file.filename,
+      url: file.url,
+    }));
+    return res.status(200).json({
+      success: true,
+      files: filesList,
+    });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Error fetching files" });
+  }
+});
+
+router.get("/search", async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        message: "Query is required",
+      });
+    }
+
+    const files = await File.find({
+      filename: { $regex: query, $options: "i" },
+    });
+
+    if (files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No files with this name",
+      });
+    }
+    const filesList = files.map((file) => ({
+      filename: file.filename,
+      url: file.url,
+    }));
+
+    res.status(200).json({
+      success: true,
+      files: filesList,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching files",
     });
   }
 });
