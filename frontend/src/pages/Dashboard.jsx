@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
@@ -110,11 +108,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#111] text-gray-200">
+    <div className="min-h-screen bg-[#111] text-gray-200 flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-8">
+      <div className="container mx-auto px-4 py-24 md:py-20 flex flex-col flex-grow">
+        <div className="max-w-5xl mx-auto w-full">
+          {/* Upload File Section */}
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 md:p-6 mb-8">
             <h2 className="text-xl text-center font-semibold text-white mb-4">
               Upload File
             </h2>
@@ -153,6 +152,7 @@ const Dashboard = () => {
             />
           </div>
 
+          {/* Error Message */}
           {error && (
             <div className="mb-6 bg-red-900/50 border border-red-800 text-red-200 p-4 rounded-lg flex items-center gap-2">
               <FaExclamationTriangle className="text-red-400" />
@@ -160,7 +160,8 @@ const Dashboard = () => {
             </div>
           )}
 
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+          {/* Files List */}
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 md:p-6 flex flex-col flex-grow">
             <h2 className="text-xl font-semibold text-white mb-4">
               Files Uploaded by You:
             </h2>
@@ -171,37 +172,34 @@ const Dashboard = () => {
                 <p className="text-gray-500">No files uploaded yet</p>
               </div>
             ) : (
-              <div className="space-y-3 max-h-60 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto min-h-20 max-h-[calc(100vh-300px)] space-y-3">
                 {files.map((file) => (
                   <div
                     key={file._id}
-                    className="flex items-center justify-between bg-gray-800/50 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
+                    className="flex items-center justify-between bg-gray-800/50 p-3 md:p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
                   >
-                    <div className="flex items-center space-x-3 overflow-hidden">
-                      <div className="bg-gray-700 p-2 rounded">
-                        <FaFile className="text-blue-400" />
-                      </div>
-                      <div className="min-w-0">
+                    {/* File Icon and Name with Scrollable Overflow */}
+                    <div className="flex items-center space-x-3 w-full">
+                      <div className="w-full max-w-xs md:max-w-md lg:max-w-lg bg-gray-700/30 rounded-lg p-2">
                         <a
                           href={file.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-white hover:text-blue-400 font-medium truncate block transition-colors"
+                          className="text-white hover:text-blue-400 font-medium block transition-colors break-words max-h-[3rem] overflow-y-auto"
                         >
                           {file.filename}
                         </a>
                       </div>
                     </div>
 
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleDelete(file._id)}
-                        className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                        title="Delete"
-                      >
-                        <FaTrash size={18} />
-                      </button>
-                    </div>
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDelete(file._id)}
+                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                      title="Delete"
+                    >
+                      <FaTrash size={18} />
+                    </button>
                   </div>
                 ))}
               </div>
