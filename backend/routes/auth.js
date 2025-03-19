@@ -58,7 +58,7 @@ router.post("/signup", async (req, res) => {
     }
 
     const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 1 * 60 * 1000);
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const otpSent = await sendOTP(email, otp);
     if (!otpSent.success) {
@@ -81,6 +81,54 @@ router.post("/signup", async (req, res) => {
     });
   } catch (e) {
     return res.status(500).json({ message: "SignUp failed", error: e.message });
+  }
+});
+
+//Resend OTP Route
+
+route.post("/resent-otp", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await OTPModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist",
+      });
+    }
+
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+
+    const otpSent = await sendOTP(email, otp);
+
+    if (!otpSent.success) {
+      return res.status(500).json({
+        success: false,
+        message: "Error sending the OTP",
+      });
+    }
+
+    await OTPModel.findByIdAndUpdate(
+      { email },
+      {
+        otp,
+        otpExpiry,
+      },
+      {
+        new: true,
+      }
+    );
+    return res.status(200).json({
+      success: true,
+      message: "New OTP sent! Please check your email",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      message: "Resend OTP failed",
+    });
   }
 });
 
