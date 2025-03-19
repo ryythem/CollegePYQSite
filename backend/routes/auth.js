@@ -86,8 +86,9 @@ router.post("/signup", async (req, res) => {
 
 //Resend OTP Route
 
-router.post("/resent-otp", async (req, res) => {
+router.post("/resend-otp", async (req, res) => {
   const { email } = req.body;
+
   try {
     const user = await OTPModel.findOne({ email });
 
@@ -110,7 +111,7 @@ router.post("/resent-otp", async (req, res) => {
       });
     }
 
-    await OTPModel.findByIdAndUpdate(
+    await OTPModel.findOneAndUpdate(
       { email },
       {
         otp,

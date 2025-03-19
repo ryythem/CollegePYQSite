@@ -1,74 +1,119 @@
-
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import Navbar from "../components/Navbar"
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import Navbar from "../components/Navbar";
 
 const Signup = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [otp, setOtp] = useState("")
-  const [otpSent, setOtpSent] = useState(false)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (otpSent && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [otpSent, resendTimer]);
 
   const handleSignup = async () => {
     if (!email || !password) {
-      setError("Please fill in all fields")
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     try {
       const response = await axios.post("http://localhost:8000/auth/signup", {
         email,
         password,
-      })
+      });
 
       if (response.data.success) {
-        setOtpSent(true)
-        setError("")
+        setOtpSent(true);
+        setError("");
+        setResendTimer(60);
       } else {
-        setError(response.data.message || "Signup failed. Try again.")
+        setError(response.data.message || "Signup failed. Try again.");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Please try again.")
+      setError(
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleOtp = async () => {
     if (!otp) {
-      setError("Please enter the OTP")
-      return
+      setError("Please enter the OTP");
+      return;
     }
 
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await axios.post("http://localhost:8000/auth/verify-otp", {
-        email,
-        otp,
-      })
+      const response = await axios.post(
+        "http://localhost:8000/auth/verify-otp",
+        {
+          email,
+          otp,
+        }
+      );
 
       if (response.data.success) {
-        console.log("OTP Verified. Redirecting...")
-        setError("")
-        navigate("/login")
+        console.log("OTP Verified. Redirecting...");
+        setError("");
+        navigate("/login");
       } else {
-        setError(response.data.message || "Invalid OTP. Please try again.")
+        setError(response.data.message || "Invalid OTP. Please try again.");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "OTP verification failed. Try again.")
+      setError(
+        err.response?.data?.message || "OTP verification failed. Try again."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const handleResendOtp = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/auth/resend-otp",
+        {
+          email,
+        }
+      );
+
+      if (response.data.success) {
+        setError(
+          response.data?.message || "New OTP has been sent! Check email"
+        );
+        setResendTimer(60);
+      } else {
+        setError(response.data?.message || "Failed to send OTP. Try Again");
+      }
+    } catch (e) {
+      setError(e.response?.data?.message || "Error sending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#111] text-gray-200">
@@ -78,19 +123,24 @@ const Signup = () => {
           {!otpSent ? (
             <div className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-white">Create Account</h2>
-                <p className="text-gray-400">Sign up to access PYQ Finder</p>
+                <h2 className="text-3xl font-bold text-white">
+                  Create Account
+                </h2>
+                <p className="text-gray-400">Sign up to upload PYQs</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-400 mb-1"
+                  >
                     Email
                   </label>
                   <input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="you@smit.smu.edu.in"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-base"
@@ -98,7 +148,10 @@ const Signup = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-400 mb-1"
+                  >
                     Password
                   </label>
                   <input
@@ -122,21 +175,26 @@ const Signup = () => {
 
               <p className="text-center text-gray-500 text-sm">
                 Already have an account?{" "}
-                <a href="/login" className="text-blue-400 hover:text-blue-300">
-                  Log in
-                </a>
+                <Link to="/login" className="text-blue-400 hover:text-blue-300">
+                  Log In
+                </Link>
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-white">Verify Email</h2>
-                <p className="text-gray-400">Enter the OTP sent to your email</p>
+                <p className="text-gray-400">
+                  Enter the OTP sent to your email
+                </p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="otp" className="block text-sm font-medium text-gray-400 mb-1">
+                  <label
+                    htmlFor="otp"
+                    className="block text-sm font-medium text-gray-400 mb-1"
+                  >
                     OTP Code
                   </label>
                   <input
@@ -156,18 +214,36 @@ const Signup = () => {
                 >
                   {loading ? "Verifying..." : "Verify OTP"}
                 </button>
+
+                <p>
+                  {resendTimer > 0 ? (
+                    `Resend OTP in ${Math.floor(resendTimer / 60)}:${(
+                      resendTimer % 60
+                    )
+                      .toString()
+                      .padStart(2, "0")}`
+                  ) : (
+                    <button
+                      onClick={handleResendOtp}
+                      className="text-blue-400 hover:text-blue-300 font-medium"
+                    >
+                      Resend OTP
+                    </button>
+                  )}
+                </p>
               </div>
             </div>
           )}
 
           {error && (
-            <div className="mt-4 p-3 bg-red-900/50 border border-red-800 text-red-200 rounded-md text-sm">{error}</div>
+            <div className="mt-4 p-3 bg-red-900/50 border border-red-800 text-red-200 rounded-md text-sm">
+              {error}
+            </div>
           )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
-
+export default Signup;

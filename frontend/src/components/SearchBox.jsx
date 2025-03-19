@@ -1,4 +1,4 @@
-"use client"
+
 
 import axios from "axios"
 import { useState, useEffect } from "react"
@@ -10,6 +10,7 @@ const SearchBox = () => {
   const [noResult, setNoResult] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [debouncedInput, setDebouncedInput] = useState("")
+  const [isFocused, setIsFocused] = useState(false)
 
   // Debounce
   useEffect(() => {
@@ -19,7 +20,8 @@ const SearchBox = () => {
 
     return () => clearTimeout(timer)
   }, [input])
-  //debouncing
+
+  // Fetch PDFs on input change
   useEffect(() => {
     fetchFiles(debouncedInput)
   }, [debouncedInput])
@@ -49,43 +51,38 @@ const SearchBox = () => {
     }
   }
 
-  const handleInput = (e) => {
-    const value = e.target.value
-    setInput(value)
-  }
-
-  const getFileExtension = (filename) => {
-    return filename.split(".").pop().toLowerCase()
-  }
-
   return (
-    <div className="w-full flex flex-col items-center">
-      <div className="relative w-full max-w-xl">
+    <div className="w-full flex flex-col items-center relative">
+      {/* Search Box */}
+      <div
+        className={`relative w-full max-w-xl transition-all duration-300 ${
+          isFocused ? "scale-105 shadow-lg" : ""
+        }`}
+      >
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           {isSearching ? <FaSpinner className="text-gray-400 animate-spin" /> : <FaSearch className="text-gray-400" />}
         </div>
         <input
           type="text"
           value={input}
-          onChange={handleInput}
+          onChange={(e) => setInput(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delayed to allow clicking results
           placeholder="Search for question papers..."
           className="w-full py-3 md:py-4 pl-12 pr-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white placeholder-gray-500"
         />
       </div>
 
-      {/* Search Results - Fixed position to prevent content shifting */}
-      <div className="mt-4 w-full max-w-xl">
-        {noResult && (
-          <div className="text-center py-6 bg-gray-900 rounded-lg border border-gray-800">
-            <p className="text-gray-400">No question papers found for "{input}"</p>
-          </div>
-        )}
-
-        {pdfs.length > 0 && (
-          <div className="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
-            <div className="p-4 border-b border-gray-800">
-              <h3 className="text-lg font-medium text-white">Search Results</h3>
+      {/* Search Results Dropdown */}
+      {isFocused && (noResult || pdfs.length > 0) && (
+        <div className="absolute top-full mt-2 w-full max-w-xl bg-gray-900 rounded-lg border border-gray-800 shadow-lg overflow-hidden">
+          {noResult && (
+            <div className="text-center py-6">
+              <p className="text-gray-400">No question papers found for "{input}"</p>
             </div>
+          )}
+
+          {pdfs.length > 0 && (
             <ul className="divide-y divide-gray-800 max-h-60 overflow-y-auto">
               {pdfs.map((pdf, index) => (
                 <li key={index} className="hover:bg-gray-800/50 transition-colors">
@@ -106,12 +103,11 @@ const SearchBox = () => {
                 </li>
               ))}
             </ul>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
 
 export default SearchBox
-
