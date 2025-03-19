@@ -29,7 +29,7 @@ const Navbar = () => {
     <nav className="bg-black/80 backdrop-blur-md border-b border-gray-800 fixed w-full top-0 z-40">
       <div className="container mx-auto flex justify-between items-center h-16 px-4">
         <Link to="/" className="text-xl font-semibold text-white tracking-tight">
-          PYQ <span className="text-blue-500">Finder</span>
+          Last Moment <span className="text-blue-500">Kids</span>
         </Link>
 
         {/* Desktop Menu */}

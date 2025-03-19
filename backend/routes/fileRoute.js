@@ -8,7 +8,7 @@ const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 const filenamePattern =
-  /^[A-Za-z]+_Sem\d+_(MidSem|EndSem|Quiz\d)_\d{4}\.[a-zA-Z0-9]+$/;
+  /^[A-Za-z]+_Sem\d+_(MidSem|EndSem|Quiz\d)_[A-Za-z]+_\d{4}\.[a-zA-Z0-9]+$/;
 
 router.post(
   "/upload",
@@ -26,8 +26,9 @@ router.post(
 
       if (!filenamePattern.test(filename)) {
         return res.status(400).json({
+          success: false,
           message:
-            "Invalid filename! Upload the file in the required format. Use: Course_Semester_ExamType_Year.extension (e.g., COA_Sem3_EndSem_2024.pdf)",
+            "Invalid filename! Upload the file in the required format. Use: Course_Semester_ExamType_Dept_Year.extension (e.g., COA_Sem3_EndSem_Btech_2024.pdf)",
         });
       }
 

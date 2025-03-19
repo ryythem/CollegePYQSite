@@ -66,12 +66,15 @@ const Dashboard = () => {
           }
         );
 
-        if (res.status === 200) {
-          setFile(null);
-          fetchFiles();
+        if (res.data.success === false) {
+          setError(res.data.message);
         }
+        setFile(null);
+        fetchFiles();
       } catch (e) {
-        setError("File upload failed. Please try again.");
+        setError(
+          e.response?.data?.message || "File upload failed. Please try again."
+        );
       } finally {
         setUploading(false);
       }
@@ -115,7 +118,14 @@ const Dashboard = () => {
           {/* Upload File Section */}
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 md:p-6 mb-8">
             <h2 className="text-xl text-center font-semibold text-white mb-4">
-              Upload File
+              Upload File <br />{" "}
+              <span className="text-md">
+                (Format: Subject_Semester_ExamType_Dept_Year)
+              </span>{" "}
+              <br />
+              <span className="text-sm">
+                (Eg: COA_Sem3_MidSem_BTech_2024.pdf)
+              </span>
             </h2>
 
             {uploading ? (
