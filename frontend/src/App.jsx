@@ -8,7 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 
 function App() {
   return (
-    <div>
+    <>
       <BrowserRouter>
         <Routes>
           <Route path="*" element={<Home />} />
@@ -20,7 +20,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </div>
+    </>
   );
 }
 

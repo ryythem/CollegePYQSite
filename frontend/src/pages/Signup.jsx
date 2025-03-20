@@ -23,21 +23,31 @@ const Signup = () => {
     return () => clearInterval(timer);
   }, [otpSent, resendTimer]);
 
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return regex.test(password);
+  };
+  
   const handleSignup = async () => {
     if (!email || !password) {
       setError("Please fill in all fields");
       return;
     }
-
+  
+    if (!validatePassword(password)) {
+      setError("Password must be at least 8 characters long and include a number and special character.");
+      return;
+    }
+  
     setLoading(true);
     setError("");
-
+  
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         email,
         password,
       });
-
+  
       if (response.data.success) {
         setOtpSent(true);
         setError("");
@@ -53,6 +63,7 @@ const Signup = () => {
       setLoading(false);
     }
   };
+  
 
   const handleOtp = async () => {
     if (!otp) {

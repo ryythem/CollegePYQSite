@@ -1,11 +1,10 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const User = require("../model/userSchema.js");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../model/otpSchema.js");
-const { messaging } = require("firebase-admin");
-const authMiddleware = require("../middleware/authMiddleware.js");
+
 
 const router = express.Router();
 
@@ -70,7 +69,7 @@ router.post("/signup", async (req, res) => {
         error: otpSent.error,
       });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
     await OTPModel.findOneAndUpdate(
       { email },
       { otp, otpExpiry, password: hashedPassword },
@@ -190,7 +189,7 @@ router.post("/forgot-password", async (req, res) => {
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const otpSent = await sendOTP(email, otp);
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
     if (!otpSent.success) {
       return res.status(400).json({
         success: false,

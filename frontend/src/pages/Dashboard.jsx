@@ -38,6 +38,12 @@ const Dashboard = () => {
   useEffect(() => {
     if (!file) return;
 
+    if (!file.name.endsWith(".pdf")) {
+      setError("Only PDF files are allowed.");
+      setFile(null);
+      return;
+    }
+
     if (file.size > 10 * 1024 * 1024) {
       setError("File size greater than 10 MB is not allowed.");
       setFile(null);
@@ -147,9 +153,7 @@ const Dashboard = () => {
               >
                 <div className="flex flex-col items-center">
                   <FaUpload className="text-gray-400 text-3xl mb-3" />
-                  <p className="text-gray-300">
-                    Click to upload or drag and drop
-                  </p>
+                  <p className="text-gray-300">Click to upload</p>
                 </div>
               </div>
             )}
