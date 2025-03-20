@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../model/otpSchema.js");
 const { messaging } = require("firebase-admin");
+const authMiddleware = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
 

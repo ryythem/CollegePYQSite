@@ -19,6 +19,10 @@ const fileSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  uploaderName: {
+    type: String,
+    required: true
+  },
 });
 
 const File = FileDBConnection.model("File", fileSchema);

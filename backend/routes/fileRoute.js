@@ -23,6 +23,7 @@ router.post(
       const file = req.file;
       const filename = file.originalname;
       const userId = req.user._id;
+      const userName = req.user.email.split("_")[0];
 
       if (!filenamePattern.test(filename)) {
         return res.status(400).json({
@@ -57,6 +58,7 @@ router.post(
           userId,
           filename,
           url: fileURL,
+          uploaderName: userName,
         });
 
         await newFile.save();
@@ -110,29 +112,29 @@ router.delete("/delete-file/:fileId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/all", async (req, res) => {
-  try {
-    const files = await File.find();
-    if (files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No files found",
-      });
-    }
-    const filesList = files.map((file) => ({
-      filename: file.filename,
-      url: file.url,
-    }));
-    return res.status(200).json({
-      success: true,
-      files: filesList,
-    });
-  } catch (e) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Error fetching files" });
-  }
-});
+// router.get("/all", async (req, res) => {
+//   try {
+//     const files = await File.find();
+//     if (files.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No files found",
+//       });
+//     }
+//     const filesList = files.map((file) => ({
+//       filename: file.filename,
+//       url: file.url,
+//     }));
+//     return res.status(200).json({
+//       success: true,
+//       files: filesList,
+//     });
+//   } catch (e) {
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Error fetching files" });
+//   }
+// });
 
 router.get("/search", async (req, res) => {
   try {
@@ -158,6 +160,7 @@ router.get("/search", async (req, res) => {
     const filesList = files.map((file) => ({
       filename: file.filename,
       url: file.url,
+      uploaderName: file.uploaderName,
     }));
 
     res.status(200).json({

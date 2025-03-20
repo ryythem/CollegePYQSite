@@ -1,55 +1,55 @@
-
-
-import axios from "axios"
-import { useState, useEffect } from "react"
-import { FaSearch, FaFile, FaExternalLinkAlt, FaSpinner } from "react-icons/fa"
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { FaSearch, FaFile, FaExternalLinkAlt, FaSpinner } from "react-icons/fa";
 
 const SearchBox = () => {
-  const [input, setInput] = useState("")
-  const [pdfs, setPdfs] = useState([])
-  const [noResult, setNoResult] = useState(false)
-  const [isSearching, setIsSearching] = useState(false)
-  const [debouncedInput, setDebouncedInput] = useState("")
-  const [isFocused, setIsFocused] = useState(false)
+  const [input, setInput] = useState("");
+  const [pdfs, setPdfs] = useState([]);
+  const [noResult, setNoResult] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [debouncedInput, setDebouncedInput] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   // Debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedInput(input)
-    }, 500)
+      setDebouncedInput(input);
+    }, 500);
 
-    return () => clearTimeout(timer)
-  }, [input])
+    return () => clearTimeout(timer);
+  }, [input]);
 
   // Fetch PDFs on input change
   useEffect(() => {
-    fetchFiles(debouncedInput)
-  }, [debouncedInput])
+    fetchFiles(debouncedInput);
+  }, [debouncedInput]);
 
   const fetchFiles = async (query) => {
     if (!query) {
-      setPdfs([])
-      setNoResult(false)
-      return
+      setPdfs([]);
+      setNoResult(false);
+      return;
     }
 
-    setIsSearching(true)
+    setIsSearching(true);
 
     try {
-      const response = await axios.get(`http://localhost:8000/files/search?query=${query}`)
+      const response = await axios.get(
+        `http://localhost:8000/files/search?query=${query}`
+      );
 
       if (response.data.success) {
-        setPdfs(response.data.files)
-        setNoResult(response.data.files.length === 0)
+        setPdfs(response.data.files);
+        setNoResult(response.data.files.length === 0);
       }
     } catch (e) {
-      console.log("Error fetching files")
-      setNoResult(true)
-      setPdfs([])
+      console.log("Error fetching files");
+      setNoResult(true);
+      setPdfs([]);
     } finally {
-      setIsSearching(false)
+      setIsSearching(false);
     }
-  }
+  };
 
   return (
     <div className="w-full flex flex-col items-center relative">
@@ -60,7 +60,11 @@ const SearchBox = () => {
         }`}
       >
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          {isSearching ? <FaSpinner className="text-gray-400 animate-spin" /> : <FaSearch className="text-gray-400" />}
+          {isSearching ? (
+            <FaSpinner className="text-gray-400 animate-spin" />
+          ) : (
+            <FaSearch className="text-gray-400" />
+          )}
         </div>
         <input
           type="text"
@@ -78,14 +82,19 @@ const SearchBox = () => {
         <div className="absolute top-full mt-2 w-full max-w-xl bg-gray-900 rounded-lg border border-gray-800 shadow-lg overflow-hidden">
           {noResult && (
             <div className="text-center py-6">
-              <p className="text-gray-400">No question papers found for "{input}"</p>
+              <p className="text-gray-400">
+                No question papers found for "{input}"
+              </p>
             </div>
           )}
 
           {pdfs.length > 0 && (
             <ul className="divide-y divide-gray-800 max-h-60 overflow-y-auto">
               {pdfs.map((pdf, index) => (
-                <li key={index} className="hover:bg-gray-800/50 transition-colors">
+                <li
+                  key={index}
+                  className="hover:bg-gray-800/50 transition-colors"
+                >
                   <a
                     href={pdf.url}
                     target="_blank"
@@ -98,7 +107,12 @@ const SearchBox = () => {
                     <div className="flex-1 min-w-0">
                       <p className="truncate font-medium">{pdf.filename}</p>
                     </div>
-                    <FaExternalLinkAlt className="text-gray-500 ml-2" />
+                    <div className="flex-1 min-w-0 text-right italic text-gray-400">
+                      <p className="truncate">
+                        Uploaded by: {pdf.uploaderName}
+                      </p>
+                    </div>
+                    
                   </a>
                 </li>
               ))}
@@ -107,7 +121,7 @@ const SearchBox = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SearchBox
+export default SearchBox;
