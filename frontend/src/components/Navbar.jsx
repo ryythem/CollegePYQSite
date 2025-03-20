@@ -34,7 +34,7 @@ const Navbar = () => {
           to="/"
           className="text-xl font-semibold text-white tracking-tight"
         >
-          Last Moment <span className="text-blue-500">Kids</span>
+          Last Moment <span className="text-blue-500">Toppers</span>
         </Link>
 
         {/* Desktop Menu */}
