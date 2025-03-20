@@ -24,7 +24,7 @@ const Dashboard = () => {
   const fetchFiles = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/files/my-uploads",
+        `${import.meta.env.VITE_API_URL}/files/my-uploads`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -53,7 +53,7 @@ const Dashboard = () => {
       data.append("file", file);
       try {
         const res = await axios.post(
-          "http://localhost:8000/files/upload",
+          `${import.meta.env.VITE_API_URL}/files/upload`,
           data,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -94,7 +94,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:8000/files/delete-file/${fileId}`,
+        `${import.meta.env.VITE_API_URL}/files/delete-file/${fileId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

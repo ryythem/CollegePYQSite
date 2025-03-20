@@ -33,7 +33,7 @@ const Signup = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8000/auth/signup", {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, {
         email,
         password,
       });
@@ -65,7 +65,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/verify-otp",
+        `${import.meta.env.VITE_API_URL}/auth/verify-otp`,
         {
           email,
           otp,
@@ -94,7 +94,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/auth/resend-otp",
+        `${import.meta.env.VITE_API_URL}/auth/resend-otp`,
         {
           email,
         }

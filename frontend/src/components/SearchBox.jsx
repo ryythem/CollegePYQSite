@@ -35,7 +35,7 @@ const SearchBox = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8000/files/search?query=${query}`
+        `${import.meta.env.VITE_API_URL}/files/search?query=${query}`
       );
 
       if (response.data.success) {
@@ -112,7 +112,6 @@ const SearchBox = () => {
                         Uploaded by: {pdf.uploaderName}
                       </p>
                     </div>
-                    
                   </a>
                 </li>
               ))}
