@@ -4,6 +4,7 @@ const User = require("../model/userSchema.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../model/otpSchema.js");
+const { messaging } = require("firebase-admin");
 
 const router = express.Router();
 
@@ -169,6 +170,89 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
+//forgot password route
+
+router.post("/forgot-password", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+
+    const otpSent = await sendOTP(email, otp);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    if (!otpSent.success) {
+      return res.status(400).json({
+        success: false,
+        message: "Error sending OTP",
+      });
+    }
+
+    await OTPModel.findOneAndUpdate(
+      { email },
+      {
+        otp,
+        otpExpiry,
+        password: hashedPassword,
+      },
+      { upsert: true, new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: "OTP Sent Successfully! Please check your email",
+    });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Error resetting the password" });
+  }
+});
+
+router.post("/verify-otp2", async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const otpRecord = await OTPModel.findOne({ email });
+
+    if (!otpRecord) {
+      return res.status(404).json({
+        success: false,
+        message: "OTP Expired",
+      });
+    }
+
+    if (otpRecord.otp !== otp.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+    if (new Date(otpRecord.otpExpiry) < new Date()) {
+      return res.status(400).json({ success: false, message: "OTP Expired" });
+    }
+
+    await User.findOneAndUpdate({ email }, { password: otpRecord.password });
+    await OTPModel.deleteOne({ email });
+    return res.status(200).json({
+      success: true,
+      message: "Password has been changed successfully",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      message: "OTP verification failed",
+    });
+  }
+});
+
 // Login Route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -185,7 +269,7 @@ router.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid Email or Password" });
+        .json({ success: false, message: "Incorrect Password" });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {

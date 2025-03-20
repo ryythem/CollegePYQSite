@@ -8,7 +8,7 @@ const router = express.Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 const filenamePattern =
-  /^[A-Za-z]+_Sem\d+_(MidSem|EndSem|Quiz\d)_[A-Za-z]+_\d{4}\.[a-zA-Z0-9]+$/;
+  /^[A-Za-z]+_Sem\d+_(MidSem|EndSem|Quiz\d+)_\w+_\d{4}\.(pdf|docx|txt|zip|jpg|png)$/;
 
 router.post(
   "/upload",
