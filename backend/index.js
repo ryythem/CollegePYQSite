@@ -16,7 +16,7 @@ UserDBconnection();
 app.use("/auth", authRoute);
 app.use("/files", fileRoute);
 
-app.get("hello", (req, res) => {
+app.get("/hello", (req, res) => {
   res.send("Hello");
 });
 
