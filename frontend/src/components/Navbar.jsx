@@ -1,10 +1,12 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { FaCaretDown, FaMinus } from "react-icons/fa";
 
 const Navbar = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,6 +43,35 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-6">
           {!token ? (
             <>
+              <div className="relative">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="flex items-center space-x-1 text-white px-4 py-2 hover:bg-gray-800 rounded-md transition"
+                >
+                  <span>More</span> {isOpen ? <FaMinus /> : <FaCaretDown />}
+                </button>
+                {isOpen && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-md shadow-lg">
+                    <Link
+                      to="/top-contributors"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Top Contributors
+                    </Link>
+                    <a
+                      href="https://gpa-estimator.pages.dev/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      GPA Estimator
+                    </a>
+                  </div>
+                )}
+              </div>
+
               <Link
                 to="/login"
                 className="px-4 py-2 text-gray-300 hover:text-white transition"
@@ -56,6 +87,35 @@ const Navbar = () => {
             </>
           ) : (
             <>
+              <div className="relative">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="flex items-center space-x-1 text-white px-4 py-2 hover:bg-gray-800 rounded-md transition"
+                >
+                  <span>More</span> {isOpen ? <FaMinus /> : <FaCaretDown />}
+                </button>
+                {isOpen && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-md shadow-lg">
+                    <Link
+                      to="/top-contributors"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Top Contributors
+                    </Link>
+                    <a
+                      href="https://gpa-estimator.pages.dev/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      GPA Estimator
+                    </a>
+                  </div>
+                )}
+              </div>
+
               {/* Show Dashboard link only if not on the dashboard page */}
               {location.pathname !== "/dashboard" && (
                 <Link
@@ -94,7 +154,10 @@ const Navbar = () => {
       >
         <button
           className="absolute top-6 right-6 text-gray-300"
-          onClick={() => setIsMenuOpen(false)}
+          onClick={() => {
+            setIsMenuOpen(false);
+            setIsOpen(false);
+          }}
         >
           <X size={24} />
         </button>
@@ -115,10 +178,67 @@ const Navbar = () => {
             >
               Sign up
             </Link>
+            <div className="relative">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center space-x-1 text-white px-4 py-2 hover:bg-gray-800 rounded-md transition"
+              >
+                <span>More</span> {isOpen ? <FaMinus /> : <FaCaretDown />}
+              </button>
+              {isOpen && (
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-md shadow-lg">
+                  <Link
+                    to="/top-contributors"
+                    className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Top Contributors
+                  </Link>
+                  <a
+                    href="https://gpa-estimator.pages.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    GPA Estimator
+                  </a>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <>
             {/* Show Dashboard link only if not on the dashboard page */}
+            <div className="relative">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center space-x-1 text-white px-4 py-2 hover:bg-gray-800 rounded-md transition"
+              >
+                <span>More</span> {isOpen ? <FaMinus /> : <FaCaretDown />}
+              </button>
+              {isOpen && (
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-md shadow-lg">
+                  <Link
+                    to="/top-contributors"
+                    className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Top Contributors
+                  </Link>
+                  <a
+                    href="https://gpa-estimator.pages.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    GPA Estimator
+                  </a>
+                </div>
+              )}
+            </div>
+
             {location.pathname !== "/dashboard" && (
               <Link
                 to="/dashboard"
