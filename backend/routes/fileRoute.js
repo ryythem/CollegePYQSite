@@ -175,4 +175,32 @@ router.get("/search", async (req, res) => {
   }
 });
 
+router.get("/top-contributors", async (req, res) => {
+  try {
+    const topContributors = await File.aggregate([
+      {
+        $group: {
+          _id: "$uploaderName",
+          uploadCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { uploadCount: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: topContributors,
+    });
+  } catch (e) {
+    res.status(500).json({
+      success: false,
+    });
+  }
+});
+
 module.exports = router;
