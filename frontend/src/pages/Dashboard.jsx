@@ -119,17 +119,16 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#111] text-gray-200 flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-24 md:py-20 flex flex-col flex-grow">
+      <div className="container mx-auto px-3 sm:px-4 py-16 md:py-20 flex flex-col flex-grow">
         <div className="max-w-5xl mx-auto w-full">
           {/* Upload File Section */}
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 md:p-6 mb-8">
-            <h2 className="text-xl text-center font-semibold text-white mb-4">
-              Upload File <br />{" "}
-              <span className="text-md">
+          <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 sm:p-4 md:p-6 mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl text-center font-semibold text-white mb-3 sm:mb-4">
+              Upload File{" "}
+              <span className="text-sm sm:text-md block mt-1">
                 (Format: Subject_Semester_ExamType_Dept_Year)
               </span>{" "}
-              <br />
-              <span className="text-sm">
+              <span className="text-xs sm:text-sm block mt-1">
                 (Eg: COA_Sem3_MidSem_BTech_2024.pdf)
               </span>
             </h2>
@@ -149,7 +148,7 @@ const Dashboard = () => {
             ) : (
               <div
                 onClick={uploadFile}
-                className="border-2 border-dashed border-gray-700 rounded-lg p-2 text-center cursor-pointer hover:border-blue-500 transition-colors duration-200"
+                className="border-2 border-dashed border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors duration-200"
               >
                 <div className="flex flex-col items-center">
                   <FaUpload className="text-gray-400 text-3xl mb-3" />
@@ -169,7 +168,7 @@ const Dashboard = () => {
           {/* Error Message */}
           {error && (
             <div className="mb-6 bg-red-900/50 border border-red-800 text-red-200 p-4 rounded-lg flex items-center gap-2">
-              <FaExclamationTriangle className="text-red-400" />
+              <FaExclamationTriangle className="text-red-400 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -190,30 +189,25 @@ const Dashboard = () => {
                 {files.map((file) => (
                   <div
                     key={file._id}
-                    className="flex items-center justify-between bg-gray-800/50 p-3 md:p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
+                    className="bg-gray-800/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors overflow-hidden"
                   >
-                    {/* File Icon and Name with Scrollable Overflow */}
-                    <div className="flex items-center space-x-3 w-full">
-                      <div className="w-full max-w-xs md:max-w-md lg:max-w-lg bg-gray-700/30 rounded-lg p-2">
-                        <a
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-white hover:text-blue-400 font-medium block transition-colors break-words max-h-[3rem] overflow-y-auto"
-                        >
-                          {file.filename}
-                        </a>
-                      </div>
+                    <div className="flex items-center overflow-x-auto whitespace-nowrap scrollbar-thin">
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 text-white hover:text-blue-400 font-medium py-3 transition-colors flex-grow"
+                      >
+                        {file.filename}
+                      </a>
+                      <button
+                        onClick={() => handleDelete(file._id)}
+                        className="p-3 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0 ml-2"
+                        title="Delete"
+                      >
+                        <FaTrash size={18} />
+                      </button>
                     </div>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDelete(file._id)}
-                      className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                      title="Delete"
-                    >
-                      <FaTrash size={18} />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -221,6 +215,39 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom scrollbar styling */}
+      <style jsx global>{`
+        /* Thin scrollbar for Webkit browsers */
+        .scrollbar-thin::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: rgba(31, 41, 55, 0.5);
+          border-radius: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: rgba(75, 85, 99, 0.5);
+          border-radius: 4px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: rgba(107, 114, 128, 0.7);
+        }
+
+        /* For Firefox */
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(75, 85, 99, 0.5) rgba(31, 41, 55, 0.5);
+        }
+
+        /* Enable momentum-based scrolling on iOS */
+        .scrollbar-thin {
+          -webkit-overflow-scrolling: touch;
+        }
+      `}</style>
     </div>
   );
 };

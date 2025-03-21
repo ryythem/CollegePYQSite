@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { FaSearch, FaFile, FaExternalLinkAlt, FaSpinner } from "react-icons/fa";
+import { FaSearch, FaFile, FaSpinner } from "react-icons/fa";
 
 const SearchBox = () => {
   const [input, setInput] = useState("");
@@ -71,7 +71,7 @@ const SearchBox = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delayed to allow clicking results
+          onBlur={() => setTimeout(() => setIsFocused(false), 200)} 
           placeholder="Search for question papers..."
           className="w-full py-3 md:py-4 pl-12 pr-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white placeholder-gray-500"
         />
@@ -79,7 +79,7 @@ const SearchBox = () => {
 
       {/* Search Results Dropdown */}
       {isFocused && (noResult || pdfs.length > 0) && (
-        <div className="absolute top-full mt-2 w-full max-w-xl bg-gray-900 rounded-lg border border-gray-800 shadow-lg overflow-hidden">
+        <div className="absolute top-full mt-2 w-full max-w-xl bg-gray-900 rounded-lg border border-gray-800 shadow-lg overflow-hidden z-10">
           {noResult && (
             <div className="text-center py-6">
               <p className="text-gray-400">
@@ -99,16 +99,14 @@ const SearchBox = () => {
                     href={pdf.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center p-4 text-gray-300 hover:text-white"
+                    className="block p-4 text-gray-300 hover:text-white"
                   >
-                    <div className="bg-gray-800 p-2 rounded mr-3">
-                      <FaFile className="text-blue-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="truncate font-medium">{pdf.filename}</p>
-                    </div>
-                    <div className="flex-1 min-w-0 text-right italic text-gray-400">
-                      <p className="truncate">
+                    <div className="flex justify-between min-w-0 overflow-x-auto scrollbar-hide">
+                      <p className="font-medium whitespace-nowrap flex-1">
+                        {pdf.filename}
+                      </p>
+
+                      <p className="whitespace-nowrap italic text-gray-400 pl-4 text-right">
                         Uploaded by: {pdf.uploaderName}
                       </p>
                     </div>
@@ -119,6 +117,15 @@ const SearchBox = () => {
           )}
         </div>
       )}
+      <style jsx global>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;  /* Chrome, Safari and Opera */
+        }
+      `}</style>
     </div>
   );
 };
