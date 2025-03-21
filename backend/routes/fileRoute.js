@@ -194,7 +194,7 @@ router.get("/top-contributors", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: topContributors,
+      topContributors,
     });
   } catch (e) {
     res.status(500).json({
