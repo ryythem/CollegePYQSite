@@ -14,8 +14,11 @@ const generateOTP = () => {
 };
 
 // Send OTP via Email
+
 const sendOTP = async (email, otp) => {
   try {
+    console.log(process.env.EMAIL_PASS)
+    console.log(process.env.EMAIL_USER)
     const transporter = nodemailer.createTransport({
       host: "smtp.office365.com",
       port: 587,

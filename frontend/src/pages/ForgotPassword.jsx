@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import { Eye, EyeOff } from "lucide-react";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,10 +35,13 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/forgot-password`,
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.success) {
         setOtpSent(true);
@@ -147,21 +152,27 @@ const ForgotPassword = () => {
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-400 mb-1"
-                  >
-                    New Password
-                  </label>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-400 mb-1"
+                >
+                  New Password
+                </label>
+                <div className="relative">
                   <input
-                    id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-base"
+                    className="w-full p-3 bg-gray-800 rounded-md border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-base pr-10"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200"
+                  >
+                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </button>
                 </div>
 
                 <button
