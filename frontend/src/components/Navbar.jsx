@@ -122,7 +122,7 @@ const Navbar = () => {
                   to="/dashboard"
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition duration-200 ease-in-out"
                 >
-                  Dashboard
+                  Upload
                 </Link>
               )}
               <button
@@ -245,7 +245,7 @@ const Navbar = () => {
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition duration-200 ease-in-out"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Dashboard
+                Upload
               </Link>
             )}
             <button

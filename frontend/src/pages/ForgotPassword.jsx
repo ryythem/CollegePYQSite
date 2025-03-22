@@ -129,7 +129,7 @@ const ForgotPassword = () => {
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-white">
-                  Forget password
+                  Forgot password
                 </h2>
                 <p className="text-gray-400">Reset password</p>
               </div>
