@@ -1,7 +1,6 @@
 require("dotenv").config();
 const admin = require("firebase-admin");
 
-// Parse Firebase credentials, replacing `\n` with actual newlines
 const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 

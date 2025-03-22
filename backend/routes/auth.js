@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const OTPModel = require("../model/otpSchema.js");
 
-
 const router = express.Router();
 
 // OTP Generator Function
@@ -17,8 +16,6 @@ const generateOTP = () => {
 
 const sendOTP = async (email, otp) => {
   try {
-    console.log(process.env.EMAIL_PASS)
-    console.log(process.env.EMAIL_USER)
     const transporter = nodemailer.createTransport({
       host: "smtp.office365.com",
       port: 587,
@@ -122,6 +119,7 @@ router.post("/resend-otp", async (req, res) => {
         otpExpiry,
       },
       {
+        upsert: true,
         new: true,
       }
     );
@@ -220,6 +218,7 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+//To verify OTP for forgot password
 router.post("/verify-otp2", async (req, res) => {
   const { email, otp } = req.body;
   try {

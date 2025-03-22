@@ -20,6 +20,9 @@ const Signup = () => {
     let timer;
     if (otpSent && resendTimer > 0) {
       timer = setInterval(() => {
+        if(prev === 0){
+          return
+        }
         setResendTimer((prev) => prev - 1);
       }, 1000);
     }
