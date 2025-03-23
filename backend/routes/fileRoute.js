@@ -23,7 +23,8 @@ router.post(
       const file = req.file;
       const filename = file.originalname;
       const userId = req.user._id;
-      const userName = req.user.email.split("_")[0];
+      const username = req.user.email.split("_")[0];
+      const userName = username[0].toUpperCase() + username.slice(1);
 
       if (!filenamePattern.test(filename)) {
         return res.status(400).json({
