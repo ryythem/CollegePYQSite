@@ -68,6 +68,15 @@ const Navbar = () => {
                     >
                       GPA Estimator
                     </a>
+                    <a
+                      href="https://github.com/ryythem/CollegePYQSite"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Open Source
+                    </a>
                   </div>
                 )}
               </div>
@@ -203,6 +212,15 @@ const Navbar = () => {
                   >
                     GPA Estimator
                   </a>
+                  <a
+                      href="https://github.com/ryythem/CollegePYQSite"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-2 text-gray-300 hover:bg-gray-800"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Open Source
+                    </a>
                 </div>
               )}
             </div>
