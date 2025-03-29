@@ -80,5 +80,36 @@ npm run dev
 
 ---
 
+## **🤝Contributing** 
+We welcome contributions from the community! Follow these steps to contribute:
+
+### **1️⃣ Fork & Clone the Repository**
+```
+git clone https://github.com/yourusername/prevpapers.git
+cd prevpapers
+```
+
+### **2️⃣ Create a New Branch**
+```
+git checkout -b feature-branch
+```
+
+### **3️⃣ Make Your Changes**
+- Fix bugs, add features, or improve documentation.
+- Follow coding standards and best practices.
+
+### **4️⃣ Commit & Push**
+```
+git add .
+git commit -m "Add your message here"
+git push origin feature-branch
+```
+
+### **5️⃣ Submit a Pull Request (PR)**
+- Go to the Pull Requests tab in the GitHub repo.
+- Click New Pull Request, select your branch, and submit.
+- Wait for review and merge approval.
+
+
 ## Connect with me
  Follow me on twitter : @ryythem
